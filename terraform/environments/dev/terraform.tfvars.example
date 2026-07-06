@@ -1,0 +1,7 @@
+aws_region  = "region"
+aws_profile = "profile"
+
+environment        = "dev"
+project_name       = "project_name"
+project_short_name = "pn"
+owner              = "your_name"
