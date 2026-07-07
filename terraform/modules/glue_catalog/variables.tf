@@ -9,7 +9,7 @@ variable "owner" {
 }
 
 variable "project_short_name" {
-  description = "Project hort name"
+  description = "Project short name"
   type        = string
 }
 
