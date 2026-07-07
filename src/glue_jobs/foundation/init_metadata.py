@@ -1,9 +1,9 @@
-import sys
 import logging
+import sys
 
-from awsglue.utils import getResolvedOptions
 from awsglue.context import GlueContext
 from awsglue.job import Job
+from awsglue.utils import getResolvedOptions
 from pyspark.context import SparkContext
 
 # ------------------------------------------------------------------------------
