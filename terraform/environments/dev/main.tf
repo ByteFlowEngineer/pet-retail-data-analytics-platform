@@ -37,3 +37,14 @@ module "glue_jobs" {
   owner              = var.owner
   job_description    = "Glue ETL Job"
 }
+
+module "github_actions" {
+  source             = "../../modules/github-actions"
+  project_short_name = var.project_short_name
+  environment        = var.environment
+  glue_job_arn       = module.glue_jobs.glue_job_arn
+  bucket_arn         = module.s3.bucket_arn
+  github_repository  = "pet-retail-data-analytics-platform"
+  github_owner       = "ByteFlowEngineer"
+  owner              = var.owner
+}
