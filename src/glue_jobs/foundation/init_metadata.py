@@ -10,10 +10,7 @@ from pyspark.context import SparkContext
 # Logging
 # ------------------------------------------------------------------------------
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s %(levelname)s %(message)s"
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 
 logger = logging.getLogger(__name__)
 logger.info("Starting Metadata Initialization Job.")
@@ -22,14 +19,7 @@ logger.info("Starting Metadata Initialization Job.")
 # Read Glue Job Parameters
 # ------------------------------------------------------------------------------
 
-args = getResolvedOptions(
-    sys.argv,
-    [
-        "JOB_NAME",
-        "bucket_name",
-        "metadata_database"
-    ]
-)
+args = getResolvedOptions(sys.argv, ["JOB_NAME", "bucket_name", "metadata_database"])
 
 bucket_name = args["bucket_name"]
 metadata_database = args["metadata_database"]
@@ -54,7 +44,7 @@ logger.info("Metadata Database: %s", metadata_database)
 
 try:
     spark.sql(f"USE {metadata_database}")
-    logger.info("Using metadata database: %s",metadata_database)
+    logger.info("Using metadata database: %s", metadata_database)
 
 except Exception:
     logger.exception("Unable to use metadata database: %s", metadata_database)
