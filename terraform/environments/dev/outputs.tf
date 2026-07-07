@@ -18,7 +18,7 @@ output "glue_job_name" {
 }
 
 output "glue_job_arn" {
-  value = module.glue_jobs.arn
+  value = module.glue_jobs.glue_job_arn
 }
 
 output "glue_catalog_name" {
