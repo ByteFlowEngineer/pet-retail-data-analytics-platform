@@ -29,8 +29,8 @@ resource "aws_glue_job" "this" {
   }
 
   default_arguments = {
-    "--job-language" = "python"
-    #"--enable-glue-datacatalog" = "true"
+    "--job-language"            = "python"
+    "--enable-glue-datacatalog" = "true"
     #"--datalake-formats"                 = "delta"
     "--enable-continuous-cloudwatch-log" = "true"
     "--enable-continuous-log-filter"     = "true"

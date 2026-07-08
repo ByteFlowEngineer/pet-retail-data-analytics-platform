@@ -1,0 +1,74 @@
+name: GitHub Special Files Demo
+
+on:
+  workflow_dispatch:
+
+jobs:
+  special-files-demo:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # -------------------------------------------------------
+      # GITHUB_ENV
+      # -------------------------------------------------------
+
+      - name: Write Environment Variable
+        run: |
+          echo "NAME=Janardhan Reddy" >> $GITHUB_ENV
+          echo "CITY=Hyderabad" >> $GITHUB_ENV
+
+      - name: Read Environment Variable
+        run: |
+          echo "Name : $NAME"
+          echo "City : $CITY"
+
+      # -------------------------------------------------------
+      # GITHUB_OUTPUT
+      # -------------------------------------------------------
+
+      - name: Generate Version
+        id: version
+
+        run: |
+          echo "VERSION=1.0.0" >> $GITHUB_OUTPUT
+          echo "BUILD=20260708" >> $GITHUB_OUTPUT
+
+      - name: Read Outputs
+        run: |
+          echo "Version : ${{ steps.version.outputs.VERSION }}"
+          echo "Build   : ${{ steps.version.outputs.BUILD }}"
+
+      # -------------------------------------------------------
+      # GITHUB_STEP_SUMMARY
+      # -------------------------------------------------------
+
+      - name: Generate Summary
+        run: |
+          echo "# GitHub Special Files Demo 🚀" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Item | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Name | $NAME |" >> $GITHUB_STEP_SUMMARY
+          echo "| City | $CITY |" >> $GITHUB_STEP_SUMMARY
+          echo "| Version | ${{ steps.version.outputs.VERSION }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Build | ${{ steps.version.outputs.BUILD }} |" >> $GITHUB_STEP_SUMMARY
+
+      - name: Display GITHUB_ENV File
+        run: |
+          echo "GITHUB_ENV location:"
+          echo $GITHUB_ENV
+          echo ""
+          echo "Contents:"
+          cat $GITHUB_ENV
+
+      - name: Display GITHUB_OUTPUT File
+        run: |
+          echo "GITHUB_OUTPUT location:"
+          echo $GITHUB_OUTPUT
+          echo ""
+          echo "Contents:"
+          cat $GITHUB_OUTPUT
