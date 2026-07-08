@@ -124,5 +124,15 @@ jobs:
             src/glue_jobs/foundation/init_metadata.py \
             s3://${{ vars.S3_BUCKET }}/${{ vars.GLUE_SCRIPT_S3_KEY }}
 
+      - name: Start Glue Job
+        id: start_glue_job
+        run: |
+          JOB_RUN_ID=$(aws glue start-job-run \
+            --job-name "${{ vars.GLUE_JOB_NAME }}" \
+            --query 'JobRunId' \
+            --output text)
+          echo "Started Glue Job: $JOB_RUN_ID"
+          echo "JOB_RUN_ID=$JOB_RUN_ID" >> $GITHUB_ENV
+
 
   
