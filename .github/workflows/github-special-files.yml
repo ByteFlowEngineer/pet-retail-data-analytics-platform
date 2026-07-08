@@ -1,7 +1,11 @@
 name: GitHub Special Files Demo
 
 on:
-  workflow_dispatch:
+    workflow_dispatch:
+
+    push:
+        branches:
+            - feature/github-actions
 
 jobs:
   special-files-demo:
