@@ -3,7 +3,9 @@ variable "aws_region" {
 }
 
 variable "aws_profile" {
-  type = string
+  description = "AWS CLI profile used for local development"
+  type        = string
+  default     = null
 }
 
 variable "environment" {

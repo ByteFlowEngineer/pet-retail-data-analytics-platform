@@ -82,6 +82,15 @@ jobs:
         with :
           terraform-version: ${{ env.TERRAFORM_VERSION }}
 
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Verify AWS Identity
+        run: aws sts get-caller-identity
+
       - name: Terraform Format Check
         working-directory: terraform/environments/dev
         run: terraform fmt -check -recursive
@@ -96,8 +105,8 @@ jobs:
 
       - name: Terraform Plan
         working-directory: terraform/environments/dev
-        run: terraform plan
-        
+        run: terraform plan -input=false
+
 
   deploy :
     needs : 
