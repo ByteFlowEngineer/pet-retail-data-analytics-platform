@@ -94,6 +94,11 @@ jobs:
         working-directory: terraform/environments/dev
         run: terraform validate
 
+      - name: Terraform Plan
+        working-directory: terraform/environments/dev
+        run: terraform plan
+        
+
   deploy :
     needs : 
       - lint
