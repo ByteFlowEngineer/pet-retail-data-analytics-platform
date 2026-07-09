@@ -125,14 +125,60 @@ jobs:
             s3://${{ vars.S3_BUCKET }}/${{ vars.GLUE_SCRIPT_S3_KEY }}
 
       - name: Start Glue Job
-        id: start_glue_job
+        id: start_glue
         run: |
           JOB_RUN_ID=$(aws glue start-job-run \
             --job-name "${{ vars.GLUE_JOB_NAME }}" \
             --query 'JobRunId' \
             --output text)
           echo "Started Glue Job: $JOB_RUN_ID"
-          echo "JOB_RUN_ID=$JOB_RUN_ID" >> $GITHUB_ENV
+          echo "JOB_RUN_ID=$JOB_RUN_ID" >> "$GITHUB_OUTPUT"
+
+      - name: Wait for Glue Job
+        run: |
+          JOB_RUN_ID="${{ steps.start_glue.outputs.JOB_RUN_ID }}"
+          echo "Monitoring Glue Job..."
+          echo "Run ID: $JOB_RUN_ID"
+
+          while true
+          do
+            STATUS=$(aws glue get-job-run \
+              --job-name "${{ vars.GLUE_JOB_NAME }}" \
+              --run-id "$JOB_RUN_ID" \
+              --query 'JobRun.JobRunState' \
+              --output text)
+
+            echo "Current Status : $STATUS"
+
+            if [[ "$STATUS" == "SUCCEEDED" ]]; then
+              echo "Glue Job Succeeded"
+              break
+            fi
+
+            if [[ "$STATUS" == "FAILED" || \
+                  "$STATUS" == "STOPPED" || \
+                  "$STATUS" == "TIMEOUT" ]]; then
+
+              echo "Glue Job Failed"
+              exit 1
+            fi
+
+            sleep 20
+
+          done
+
+      - name: Deployment Summary
+        if: success()
+
+        run: |
+          echo "# Glue Deployment Summary " >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          echo "| Item | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Glue Job | ${{ vars.GLUE_JOB_NAME }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Job Run ID | ${{ steps.start_glue.outputs.JOB_RUN_ID }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Status | SUCCESS |" >> $GITHUB_STEP_SUMMARY
 
 
   
