@@ -46,5 +46,3 @@ resource "aws_glue_job" "this" {
 
   tags = local.common_tags
 }
-
-

@@ -44,6 +44,7 @@ logger.info("Metadata Database: %s", metadata_database)
 
 try:
     spark.sql(f"USE {metadata_database}")
+    # spark.catalog.setCurrentDatabase(metadata_database)
     logger.info("Using metadata database: %s", metadata_database)
 
 except Exception:
