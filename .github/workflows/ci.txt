@@ -137,7 +137,7 @@ jobs:
           echo '```' >> $GITHUB_STEP_SUMMARY
           terraform show -no-color tfplan >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
-
+          
       
       - name: Upload Terraform Plan
         uses: actions/upload-artifact@v4
@@ -146,15 +146,55 @@ jobs:
           path: terraform/environments/dev/tfplan
           retention-days: 7
 
-  ###########################################################################
-  # Deploy Glue Job
-  ###########################################################################
+  terraform-apply:
+    needs: terraform
+    runs-on: ubuntu-latest
+
+    env:
+      TF_VAR_aws_region: ${{ vars.AWS_REGION }}
+      TF_VAR_environment: ${{ vars.ENVIRONMENT }}
+      TF_VAR_project_name: ${{ vars.PROJECT_NAME }}
+      TF_VAR_project_short_name: ${{ vars.PROJECT_SHORT_NAME }}
+      TF_VAR_owner: ${{ vars.OWNER }}
+
+    if: startsWith(github.ref, 'refs/heads/feature/')
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform-version: ${{ env.TERRAFORM_VERSION }}
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Download Terraform Plan
+        uses: actions/download-artifact@v4
+        with:
+          name: terraform-plan
+          path: terraform/environments/dev
+
+      - name: Terraform Init
+        working-directory: terraform/environments/dev
+        run: terraform init
+
+      - name: Terraform Apply
+        working-directory: terraform/environments/dev
+        run: terraform apply -input=false tfplan
+
 
   deploy :
     needs : 
       - lint
       - test
       - terraform
+      - terraform-apply
 
     runs-on : ubuntu-latest
 
@@ -220,6 +260,7 @@ jobs:
             fi
 
             sleep 20
+
           done
 
       - name: Deployment Summary
